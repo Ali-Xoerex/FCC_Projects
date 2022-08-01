@@ -4,16 +4,18 @@ $(document).ready(async function (){
     }
     $("#startstop").click(function () {
         // start and stop
-        if (clear === 1){
+        if (clear === 1 && stop === 1){
             clear = 0;
-        }
-        if (stop === 1){
             stop = 0;
-        } else if (stop === 0){
+        }else if (clear === 1 && stop === 0){
+            clear = 0;
+        }else if (clear === 0 && stop === 1){
+            stop = 0;
+        }else {
             stop = 1;
         }
     });
-    
+
     $("#clear").click(function () {
         // clears the board
         clear = 1;
@@ -32,6 +34,19 @@ $(document).ready(async function (){
         clear = 0;
         stop = 0;
     });
+
+    $("td").click(function () {
+        let j = $(this).index();
+        let i = $(this).parent().index();
+        if (w[i][j] === 1){
+            w[i][j] = 0;
+            $(this).css("background-color","white");
+        } else {
+            w[i][j] = 1;
+            $(this).css("background-color","red");
+        }
+    });
+
     const sleep = ms => new Promise(r => setTimeout(r, ms));
     var out, w, n;
     var clear = 0;
@@ -45,7 +60,7 @@ $(document).ready(async function (){
         if (!clear && !stop){
             draw(w);
             await sleep(100);
-            evolution(w,n);
+            w = evolution(w,n);
             generations++;
             $("#gens").text(generations);
         } else if (clear) {
@@ -122,7 +137,9 @@ function draw(world){
 }
 
 function evolution(w,n){
+    let t = [];
     for(let i=0;i<40;i++){
+        let r = [];
         for(let j=0;j<40;j++){
             let neighbours = n[[i,j].toString()];
                 let lives = 0;
@@ -133,18 +150,26 @@ function evolution(w,n){
             });
             if (w[i][j] === 0){
                 // we have a dead cell
+               // console.log("Cell "+i+" "+j+" is dead "+"with "+lives+" lives");
                 if (lives === 3){
-                    w[i][j] = 1; // revive dead cell
+                    r.push(1); // revive dead cell
+                } else {
+                    r.push(0);
                 }
             
             } else {
               // we have a live cell
+             //console.log("Cell "+i+" "+j+" is alive "+"with "+lives+" lives");
               if (lives < 2){
-                  w[i][j] = 0;
+                  r.push(0);
+              }else if (lives === 2 || lives === 3){
+                r.push(1);
               } else if (lives > 3){
-                  w[i][j] = 0;
+                  r.push(0);
               }
             }
         }
+        t.push(r);
     }
+    return t;
 }
