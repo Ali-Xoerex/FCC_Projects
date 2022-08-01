@@ -2,30 +2,72 @@ $(document).ready(async function (){
     for(let i=0;i<40;i++){
         $("tbody").append(` <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`);
     }
+    $("#startstop").click(function () {
+        // start and stop
+        if (clear === 1){
+            clear = 0;
+        }
+        if (stop === 1){
+            stop = 0;
+        } else if (stop === 0){
+            stop = 1;
+        }
+    });
+    
+    $("#clear").click(function () {
+        // clears the board
+        clear = 1;
+        generations = 0;
+        $("#gens").text(0);
+        out = create_world(true);
+        w = out[0];
+        $("td").css("background-color","white"); 
+    });
+
+    $("#random").click(function () {
+        generations = 0;
+        $("#gens").text(0);
+        out = create_world(false);
+        w = out[0];
+        clear = 0;
+        stop = 0;
+    });
     const sleep = ms => new Promise(r => setTimeout(r, ms));
-    let out, w, n;
-    let generations = 0;
-    out = create_world();
+    var out, w, n;
+    var clear = 0;
+    var stop = 0;
+    var generations = 0;
+    out = create_world(false);
     w = out[0];
     n = out[1];
 
     while (true){
-        draw(w);
-        await sleep(100);
-        evolution(w,n);
-        generations++;
-        $("#gens").text(generations);
+        if (!clear && !stop){
+            draw(w);
+            await sleep(100);
+            evolution(w,n);
+            generations++;
+            $("#gens").text(generations);
+        } else if (clear) {
+            generations = 0;
+            $("#gens").text(0);
+            await sleep(200);
+        } else if (stop){
+            await sleep(200);
+        }
     }
 });
 
-function create_world(){
+function create_world(empty){
     let world = [];
     let neighbours = {};
     for(let i=0;i<40;i++){
         let row = [];
         for(let j=0;j<40;j++){
             let n = [];
-            if (Math.random() >= 0.5){
+            if (empty){
+                row.push(0);
+            } else if (Math.random() >= 0.5){
                 row.push(1);
             } else {
                 row.push(0);
