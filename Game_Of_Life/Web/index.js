@@ -2,6 +2,12 @@ $(document).ready(function (){
     for(let i=0;i<40;i++){
         $("tbody").append(` <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`);
     }
+    let out, w, n;
+    out = create_world();
+    w = out[0];
+    n = out[1];
+
+    draw(w);
 });
 
 function create_world(){
@@ -48,4 +54,20 @@ function create_world(){
         world.push(row);
     }
     return [world,neighbours];
+}
+
+function draw(world){
+    let table_rows = $("tbody").children();
+    for (let i=0;i<40;i++){
+        for (let j=0;j<40;j++){
+            if (world[i][j] === 0){
+                // background white
+                $(table_rows[i].children[j]).css("background-color","white");
+                console.log("========");
+            } else {
+                // background red
+                $(table_rows[i].children[j]).css("background-color","red");
+            }
+        }
+    }
 }
