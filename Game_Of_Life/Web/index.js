@@ -1,13 +1,21 @@
-$(document).ready(function (){
+$(document).ready(async function (){
     for(let i=0;i<40;i++){
         $("tbody").append(` <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`);
     }
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
     let out, w, n;
+    let generations = 0;
     out = create_world();
     w = out[0];
     n = out[1];
 
-    draw(w);
+    while (true){
+        draw(w);
+        await sleep(100);
+        evolution(w,n);
+        generations++;
+        $("#gens").text(generations);
+    }
 });
 
 function create_world(){
@@ -63,10 +71,37 @@ function draw(world){
             if (world[i][j] === 0){
                 // background white
                 $(table_rows[i].children[j]).css("background-color","white");
-                console.log("========");
             } else {
                 // background red
                 $(table_rows[i].children[j]).css("background-color","red");
+            }
+        }
+    }
+}
+
+function evolution(w,n){
+    for(let i=0;i<40;i++){
+        for(let j=0;j<40;j++){
+            let neighbours = n[[i,j].toString()];
+                let lives = 0;
+                neighbours.forEach(function(el) {
+                   if (w[el[0]][el[1]] === 1){
+                       lives ++;
+                   }
+            });
+            if (w[i][j] === 0){
+                // we have a dead cell
+                if (lives === 3){
+                    w[i][j] = 1; // revive dead cell
+                }
+            
+            } else {
+              // we have a live cell
+              if (lives < 2){
+                  w[i][j] = 0;
+              } else if (lives > 3){
+                  w[i][j] = 0;
+              }
             }
         }
     }
