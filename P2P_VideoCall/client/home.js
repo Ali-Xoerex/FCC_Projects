@@ -23,3 +23,11 @@ socket.on("roomerror", () =>{
     socket.emit("requestroom",{"room":room});
 });
 
+socket.on("sendfeed", (data) => {
+    socket.emit("feed",{"data":"Hello","room":data["room"]});
+});
+
+socket.on("getfeed", (data) =>{
+    console.log(data);
+});
+
